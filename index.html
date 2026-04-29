@@ -13,107 +13,90 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <style>
-        /* AULA TDS: O seletor universal '*' reseta as margens e paddings nativos de todos os navegadores. Garante que o layout fique igual no Chrome, Safari e Edge. */
+        
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body { 
             font-family: 'Inter', sans-serif; 
-            /* AULA TDS: UI PREMIUM - Em vez de cor sólida, aplicamos um gradiente sutil de cinza/verde claro no fundo da página. */
-            background: linear-gradient(135deg, #e9f5ec 0%, #f4f7f6 100%);
+            background-color: #f4f7f6; 
             display: flex; 
             flex-direction: column; 
-            align-items: center; 
+            align-items: center;
             min-height: 100vh;   
             color: #333;
         }
 
-        /* Container Principal (A "Folha" em branco onde tudo fica) */
+        
         .container {
             background: white;
             width: 100%;
             max-width: 480px;
             margin-top: 40px;
             border-radius: 20px;
-            /* AULA TDS: UI PREMIUM - Sombras mais suaves e difusas (rgba com 10% de opacidade) dão um aspecto de modernidade. */
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
             overflow: hidden; 
             display: flex;
             flex-direction: column;
-            /* AULA TDS: Animação que faz a caixa "surgir" de baixo para cima ao abrir a página. */
-            animation: slideUp 0.6s ease-out;
         }
 
-        /* AULA TDS: Definição da animação de entrada da tela. */
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* CABEÇALHO DO APLICATIVO */
+       
         .cabecalho {
-            /* AULA TDS: UI PREMIUM - Gradiente na barra do topo usando as cores do IFPE, dando efeito de profundidade. */
-            background: linear-gradient(135deg, #1e7b34, #155d27);
+            background-color: #1e7b34;
             color: white;
-            padding: 25px 15px;
+            padding: 20px 15px;
             display: flex; 
             align-items: center;
             justify-content: space-between;
             gap: 15px;
-            /* AULA TDS: Borda inferior com um leve sombreado interno. */
-            border-bottom: 4px solid #114a1f;
         }
         
         .cabecalho-texto {
             text-align: center;
-            flex: 1; /* AULA TDS: Ocupa todo o espaço restante entre as duas imagens laterais. */
+            flex: 1; 
         }
 
         .cabecalho h1 {
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 800;
             margin-bottom: 5px;
             line-height: 1.2;
-            letter-spacing: -0.5px; /* AULA TDS: Aproximar um pouco as letras dá um tom mais arrojado para títulos. */
         }
 
         .cabecalho p {
             font-size: 12px;
             color: #e9f5ec;
-            opacity: 0.9;
         }
 
         .logo-img {
-            max-width: 70px; 
+            max-width: 75px; 
             height: auto;
             border-radius: 8px;
-            /* AULA TDS: Filtro que dá um pequeno brilho na logo para ela se destacar no fundo verde escuro. */
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
         }
 
-        /* Área do Formulário (Onde o aluno digita) */
+        
         .formulario {
-            padding: 35px 25px;
+            padding: 30px 25px;
             display: flex;
             flex-direction: column;
-            gap: 25px; 
+            gap: 20px; 
         }
 
-        /* ALERTA MODERNO E ANIMADO */
+        
         .alerta-container {
             display: flex;
             align-items: center;
             background-color: #fffbeb;
             border-left: 5px solid #f59e0b; 
-            padding: 18px;
+            padding: 15px;
             border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.15); /* AULA TDS: Sombra com o mesmo tom laranja do alerta. */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
             gap: 15px;
         }
 
+        
         .alerta-icone {
             font-size: 35px;
-            /* AULA TDS: Animação pulsante para garantir que o aluno vai ler o aviso importante. */
-            animation: chamarAtencao 1.5s infinite ease-in-out;
+            animation: chamarAtencao 1.5s infinite;
         }
 
         @keyframes chamarAtencao {
@@ -125,7 +108,7 @@
         .alerta-texto {
             font-size: 13px;
             color: #92400e;
-            line-height: 1.6;
+            line-height: 1.5;
             text-align: justify;
         }
 
@@ -140,87 +123,66 @@
             font-weight: 800;
             color: #1e7b34;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
-        /* CAIXA DE TEXTO (INPUT) */
         .grupo-input input {
-            padding: 16px;
-            /* AULA TDS: Cor de fundo sutilmente cinza para destacar a área de digitação. */
-            background-color: #f8fafc;
+            padding: 15px;
             border: 2px solid #cbd5e1;
             border-radius: 12px;
-            font-size: 18px;
+            font-size: 16px;
             font-family: 'Inter', sans-serif;
-            font-weight: 800;
+            font-weight: 600;
             text-align: center;
             text-transform: uppercase;
-            /* AULA TDS: A transição garante que a mudança de cor ao clicar seja suave. */
-            transition: all 0.3s ease;
+            transition: border-color 0.3s;
         }
 
-        /* AULA TDS: O evento ':focus' ocorre no momento exato em que o cursor entra na caixa para digitar. */
+        
         .grupo-input input:focus {
             outline: none;
             border-color: #1e7b34;
-            background-color: #ffffff;
-            /* AULA TDS: Efeito de 'Glow' (Brilho) verde ao redor do input. */
-            box-shadow: 0 0 0 4px rgba(30, 123, 52, 0.15);
-            transform: translateY(-2px);
+            box-shadow: 0 0 0 4px rgba(30, 123, 52, 0.1);
         }
 
-        /* BOTÃO VERDE (Ação Principal) */
         .btn-gerar {
-            background: linear-gradient(135deg, #1e7b34, #155d27);
+            background-color: #1e7b34;
             color: white;
             border: none;
-            padding: 18px;
+            padding: 16px;
             border-radius: 12px;
             font-size: 16px;
             font-weight: 800;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(30, 123, 52, 0.3);
-            /* AULA TDS: Define o tempo das animações de hover. */
-            transition: all 0.3s ease;
+            transition: background-color 0.2s, transform 0.1s;
         }
 
-        /* AULA TDS: Micro-interação UX. O botão levanta um pouco e aumenta a sombra ao receber o mouse. */
-        .btn-gerar:hover { 
-            background: linear-gradient(135deg, #155d27, #0f431c);
-            transform: translateY(-3px); 
-            box-shadow: 0 8px 25px rgba(30, 123, 52, 0.4);
-        }
         
-        /* AULA TDS: Efeito de mola. O botão "afunda" fisicamente quando clicado. */
-        .btn-gerar:active { transform: translateY(1px); }
+        .btn-gerar:hover { background-color: #155d27; }
+        .btn-gerar:active { transform: scale(0.98); }
         
-        /* BOTÃO AZUL (Ação Secundária - Download) */
+       
         .btn-download {
-            background: linear-gradient(135deg, #0ea5e9, #0284c7);
+            background-color: #0ea5e9;
             color: white;
             border: none;
-            padding: 14px 20px;
-            border-radius: 10px;
+            padding: 12px 20px;
+            border-radius: 8px;
             font-size: 14px;
             font-weight: 800;
             cursor: pointer;
             width: 100%;
-            margin-top: 20px;
-            box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
-            transition: all 0.3s ease;
+            margin-top: 15px;
+            transition: background-color 0.2s;
         }
-        .btn-download:hover { 
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(14, 165, 233, 0.4);
-        }
+        .btn-download:hover { background-color: #0284c7; }
 
-        /* Área do QR Code (Escondida por Padrão) */
+        
         #area_resultado {
             display: none; 
             flex-direction: column;
             align-items: center;
-            padding: 0 25px 35px 25px;
-            animation: fadeIn 0.6s ease-in-out;
+            padding: 0 25px 30px 25px;
+            animation: fadeIn 0.5s ease-in-out;
         }
 
         @keyframes fadeIn {
@@ -228,49 +190,43 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* AULA TDS: A caixa onde o QR Code aparece. Design imitando um cartão ou ingresso. */
         .box-qrcode {
             background: white;
-            padding: 20px;
-            border-radius: 20px;
+            padding: 15px;
+            border-radius: 15px;
             border: 2px solid #e2e8f0;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             display: flex;
             justify-content: center; 
-            /* AULA TDS: Uma pequena borda interna tracejada para estilizar como um bilhete. */
-            outline: 2px dashed #cbd5e1;
-            outline-offset: -10px;
         }
 
+        
         .hash-texto {
             font-family: monospace;
             background: #f8fafc;
-            padding: 10px 20px;
-            border-radius: 10px;
-            font-size: 13px;
-            color: #475569;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #64748b;
             word-break: break-all;
             text-align: center;
-            margin-bottom: 20px;
-            border: 1px solid #e2e8f0;
+            margin-bottom: 15px;
+            border: 1px dashed #cbd5e1;
         }
 
         .instrucao {
             text-align: center;
-            font-size: 13px;
-            color: #b45309;
+            font-size: 14px;
+            color: #d97706;
             font-weight: 800;
             background: #fef3c7;
-            padding: 15px;
-            border-radius: 12px;
+            padding: 12px;
+            border-radius: 10px;
             width: 100%;
-            margin-top: 20px;
-            line-height: 1.5;
-            border: 1px solid #fde68a;
+            margin-top: 15px;
         }
 
-        /* Rodapé do Sistema */
+        /* Rodapé */
         .rodape {
             margin-top: auto;
             padding: 30px 20px;
@@ -291,7 +247,8 @@
             
             <div class="cabecalho-texto">
                 <h1>Sistema Refeitório</h1>
-                <p>IFPE - Campus Barreiros</p>
+                <p>IFPE - Campus Barreiros</p><br>
+                <strong><p>Gerador de QR Code para Acesso ao Refeitório</p></strong>
             </div>
             
             <img src="logo_ifpe.png" alt="Logo IFPE" class="logo-img" onerror="this.style.display='none'">
@@ -317,16 +274,10 @@
         <div id="area_resultado">
             <div class="hash-texto" id="txtHash">Hash de Segurança aparecerá aqui</div>
             
-            <div class="box-qrcode" id="boxQrCode"></div>
+            <div class="box-qrcode" id="boxQrCode">
+                </div>
             
-            <button class="btn-download" onclick="baixarQRCode()">
-                <svg style="vertical-align: middle; margin-right: 5px;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="7 10 12 15 17 10"></polyline>
-                    <line x1="12" y1="15" x2="12" y2="3"></line>
-                </svg>
-                BAIXAR QR CODE
-            </button>
+            <button class="btn-download" onclick="baixarQRCode()">⬇️ BAIXAR QR CODE</button>
             
             <div class="instrucao">
                 ⚠️ Salve ou faça uma captura de tela do QR Code, ou utilize o botão “Baixar QR Code”. Exiba-o no sistema para acessar o refeitório.
@@ -342,17 +293,15 @@
     </div>
 
     <script>
-        // Variáveis globais para guardar o estado do aplicativo.
         let qrcode_desenho = null; 
         let matriculaAtual = ""; 
 
+       
         function gerarCodigo() {
             try {
-                // AULA TDS: Captura a matrícula.
-                // .trim() tira os espaços das bordas. .replace(/\s+/g, '') arranca os espaços no meio do texto.
+                
                 let matriculaBruta = document.getElementById("inputMatricula").value.trim().toUpperCase().replace(/\s+/g, '');
 
-                // Validação para impedir geração de QR Code vazio.
                 if (matriculaBruta === "") {
                     alert("Por favor, digite sua matrícula primeiro!");
                     return;
@@ -360,19 +309,19 @@
                 
                 matriculaAtual = matriculaBruta; 
 
-                // AULA TDS: Função de Criptografia Unidirecional (O motor de segurança do sistema).
+                
                 let hashSeguro = CryptoJS.SHA256(matriculaBruta).toString(CryptoJS.enc.Hex).toUpperCase();
 
-                // Troca o CSS da div de resultados de 'none' para 'flex', fazendo ela aparecer na tela.
+                
                 document.getElementById("area_resultado").style.display = "flex";
                 
-                // Pega pedaços da string do Hash para mostrar pro aluno, para ele saber que é único.
+                
                 let hashResumido = hashSeguro.substring(0, 8) + "......" + hashSeguro.substring(hashSeguro.length - 8);
                 document.getElementById("txtHash").innerText = "Chave Criptografada: " + hashResumido;
 
                 let areaQr = document.getElementById("boxQrCode");
 
-                // AULA TDS: Chama a biblioteca externa para desenhar o quadrado preto e branco na div selecionada.
+                
                 if (qrcode_desenho === null) {
                     qrcode_desenho = new QRCode(areaQr, {
                         text: hashSeguro,
@@ -383,7 +332,6 @@
                         correctLevel : QRCode.CorrectLevel.H 
                     });
                 } else {
-                    // Se já existir um QR Code na tela, ele apaga o velho e desenha o novo por cima.
                     qrcode_desenho.clear();
                     qrcode_desenho.makeCode(hashSeguro);
                 }
@@ -394,12 +342,13 @@
             }
         }
 
+        
         function baixarQRCode() {
             let container = document.getElementById("boxQrCode");
             let img = container.querySelector("img");
             let originalCanvas = container.querySelector("canvas");
             
-            // AULA TDS: Captura a imagem renderizada pela biblioteca de QR Code.
+            
             let sourceElement = (img && img.src) ? img : originalCanvas;
             
             if (!sourceElement) {
@@ -407,34 +356,39 @@
                 return;
             }
 
-            // AULA TDS: Cria um Canvas na memória para adicionar uma borda de segurança branca (Resolve o bug do Modo Escuro).
+            
             let tempCanvas = document.createElement("canvas");
             let ctx = tempCanvas.getContext("2d");
 
-            let finalSize = 260; // Tamanho total da foto que será baixada.
-            let qrSize = 220;    // Tamanho do miolo (o código em si).
-            let offset = (finalSize - qrSize) / 2; // Margem (20 pixels de cada lado).
+            
+            let finalSize = 260;
+            let qrSize = 220;
+            let offset = (finalSize - qrSize) / 2; 
 
             tempCanvas.width = finalSize;
             tempCanvas.height = finalSize;
 
+            
             ctx.fillStyle = "#ffffff";
             ctx.fillRect(0, 0, finalSize, finalSize);
 
+           
             ctx.drawImage(sourceElement, offset, offset, qrSize, qrSize);
 
-            // Transforma o quadro da memória em um arquivo JPEG real e engatilha o Download.
+            
             let link = document.createElement("a");
             link.href = tempCanvas.toDataURL("image/jpeg", 1.0);
             
+            
             link.download = "QRCode_Refeitorio_" + matriculaAtual + ".jpg";
+            
             
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
         }
 
-        // AULA TDS: Atalho de Teclado. Se o aluno apertar 'Enter', ele chama o botão de Gerar.
+        
         document.getElementById("inputMatricula").addEventListener("keypress", function(event) {
             if (event.key === "Enter") {
                 event.preventDefault();
@@ -442,7 +396,7 @@
             }
         });
 
-        // AULA TDS: Evento de carregamento de página. Foca no input automaticamente.
+        
         window.onload = function() {
             document.getElementById("inputMatricula").focus();
         };
