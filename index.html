@@ -13,19 +13,21 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <style>
-        /* Reset e Base */
+        /* AULA TDS: Reset CSS. Zera as margens que os navegadores colocam por padrão para termos controle total. */
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        
         body { 
             font-family: 'Inter', sans-serif; 
             background-color: #f4f7f6; 
             display: flex; 
             flex-direction: column; 
-            align-items: center; 
-            min-height: 100vh;
+            align-items: center; /* Centraliza no eixo horizontal */
+            min-height: 100vh;   /* Garante que ocupe 100% da altura da tela do celular */
             color: #333;
         }
 
         /* Container Principal (Mobile First) */
+        /* AULA TDS: O max-width de 480px garante que a tela fique com formato de "App" mesmo se aberta num monitor largo. */
         .container {
             background: white;
             width: 100%;
@@ -33,7 +35,7 @@
             margin-top: 40px;
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            overflow: hidden;
+            overflow: hidden; /* Corta qualquer coisa que vaze das bordas arredondadas */
             display: flex;
             flex-direction: column;
         }
@@ -43,7 +45,7 @@
             background-color: #1e7b34;
             color: white;
             padding: 20px 15px;
-            display: flex;
+            display: flex; /* AULA TDS: Flexbox distribui os itens na mesma linha. */
             align-items: center;
             justify-content: space-between;
             gap: 15px;
@@ -51,7 +53,7 @@
         
         .cabecalho-texto {
             text-align: center;
-            flex: 1; /* Permite que o texto ocupe todo o espaço entre as imagens */
+            flex: 1; /* Permite que o texto ocupe todo o espaço elástico entre as imagens */
         }
 
         .cabecalho h1 {
@@ -77,7 +79,7 @@
             padding: 30px 25px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 20px; /* Espaço uniforme entre os itens do formulário */
         }
 
         /* ALERTA MODERNO E ANIMADO */
@@ -85,13 +87,14 @@
             display: flex;
             align-items: center;
             background-color: #fffbeb;
-            border-left: 5px solid #f59e0b;
+            border-left: 5px solid #f59e0b; /* Borda laranja de destaque na esquerda */
             padding: 15px;
             border-radius: 12px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
             gap: 15px;
         }
 
+        /* AULA TDS: Animações CSS (Keyframes). O ícone vai pulsar na tela para chamar a atenção do aluno. */
         .alerta-icone {
             font-size: 35px;
             animation: chamarAtencao 1.5s infinite;
@@ -99,7 +102,7 @@
 
         @keyframes chamarAtencao {
             0% { transform: scale(1); }
-            50% { transform: scale(1.15); } 
+            50% { transform: scale(1.15); } /* Aumenta 15% do tamanho original no meio da animação */
             100% { transform: scale(1); }
         }
 
@@ -135,6 +138,7 @@
             transition: border-color 0.3s;
         }
 
+        /* AULA TDS: A pseudo-classe :focus muda a cor da borda quando o aluno clica dentro da caixa para digitar. */
         .grupo-input input:focus {
             outline: none;
             border-color: #1e7b34;
@@ -153,6 +157,7 @@
             transition: background-color 0.2s, transform 0.1s;
         }
 
+        /* AULA TDS: Feedback tátil (UX). O botão escurece ao passar o mouse e 'afunda' ao clicar (:active). */
         .btn-gerar:hover { background-color: #155d27; }
         .btn-gerar:active { transform: scale(0.98); }
         
@@ -174,7 +179,7 @@
 
         /* Área de Resultado */
         #area_resultado {
-            display: none;
+            display: none; /* AULA TDS: Começa invisível. O Javascript vai trocar isso para 'flex' após o clique. */
             flex-direction: column;
             align-items: center;
             padding: 0 25px 30px 25px;
@@ -196,6 +201,7 @@
             justify-content: center; 
         }
 
+        /* AULA TDS: Ocultamos a string gigante do Hash na tela para não quebrar o layout do celular. */
         .hash-texto {
             font-family: monospace;
             background: #f8fafc;
@@ -291,9 +297,15 @@
         let qrcode_desenho = null; 
         let matriculaAtual = ""; 
 
+        // =====================================================================
+        // AULA TDS: MOTOR DE CRIPTOGRAFIA CLIENT-SIDE
+        // =====================================================================
         function gerarCodigo() {
             try {
-                let matriculaBruta = document.getElementById("inputMatricula").value.trim().toUpperCase();
+                // AULA TDS: Captura o valor. 
+                // MELHORIA DE SEGURANÇA: Adicionado o .replace(/\s+/g, '') para aniquilar 
+                // espaços invisíveis no meio da string (ex: "2026 1TDS") que estragariam o Hash.
+                let matriculaBruta = document.getElementById("inputMatricula").value.trim().toUpperCase().replace(/\s+/g, '');
 
                 if (matriculaBruta === "") {
                     alert("Por favor, digite sua matrícula primeiro!");
@@ -302,15 +314,22 @@
                 
                 matriculaAtual = matriculaBruta; 
 
+                // AULA TDS: Aplica a criptografia militar SHA-256 no próprio dispositivo do aluno.
+                // O servidor do IFPE nunca fica sabendo o que foi digitado (Privacy by Design).
                 let hashSeguro = CryptoJS.SHA256(matriculaBruta).toString(CryptoJS.enc.Hex).toUpperCase();
 
+                // Revela a caixa de resultados que estava invisível (display: none -> flex).
                 document.getElementById("area_resultado").style.display = "flex";
                 
+                // Pega os 8 primeiros e os 8 últimos caracteres do Hash para exibir na tela.
                 let hashResumido = hashSeguro.substring(0, 8) + "......" + hashSeguro.substring(hashSeguro.length - 8);
                 document.getElementById("txtHash").innerText = "Chave Criptografada: " + hashResumido;
 
                 let areaQr = document.getElementById("boxQrCode");
 
+                // AULA TDS: Se for o primeiro clique, cria o QR Code. Se o aluno errou a matrícula
+                // e clicar de novo, nós usamos o .clear() e .makeCode() para reciclar o quadrado
+                // existente, economizando memória do celular (Performance).
                 if (qrcode_desenho === null) {
                     qrcode_desenho = new QRCode(areaQr, {
                         text: hashSeguro,
@@ -318,7 +337,7 @@
                         height: 220,
                         colorDark : "#000000",
                         colorLight : "#ffffff",
-                        correctLevel : QRCode.CorrectLevel.H
+                        correctLevel : QRCode.CorrectLevel.H // 'H' = High. Aguenta até 30% de dano/sujeira no QR e ainda funciona.
                     });
                 } else {
                     qrcode_desenho.clear();
@@ -331,13 +350,15 @@
             }
         }
 
-        // --- AULA TDS: NOVA FUNÇÃO DE DOWNLOAD À PROVA DE MODO ESCURO ---
+        // =====================================================================
+        // AULA TDS: FUNÇÃO DE DOWNLOAD À PROVA DE MODO ESCURO (DARK MODE)
+        // =====================================================================
         function baixarQRCode() {
             let container = document.getElementById("boxQrCode");
             let img = container.querySelector("img");
             let originalCanvas = container.querySelector("canvas");
             
-            // Pega a imagem ou o canvas gerado pela biblioteca
+            // Pega a imagem ou o canvas gerado pela biblioteca QRCode.js
             let sourceElement = (img && img.src) ? img : originalCanvas;
             
             if (!sourceElement) {
@@ -345,43 +366,57 @@
                 return;
             }
 
-            // Cria um "quadro" (canvas) temporário na memória
+            // AULA TDS: Aqui está o truque de mestre! 
+            // O celular inverte imagens transparentes no Modo Escuro (fundo preto, QR preto).
+            // Para consertar, criamos um Canvas virtual invisível na memória do navegador.
             let tempCanvas = document.createElement("canvas");
             let ctx = tempCanvas.getContext("2d");
 
-            // Define o tamanho final da imagem com uma borda segura (260x260)
+            // Define o tamanho final da imagem com uma borda segura branca (260x260)
             let finalSize = 260;
             let qrSize = 220;
-            let offset = (finalSize - qrSize) / 2; // Centraliza o QR Code (borda de 20px)
+            let offset = (finalSize - qrSize) / 2; // Centraliza o QR Code (borda de 20px de cada lado)
 
             tempCanvas.width = finalSize;
             tempCanvas.height = finalSize;
 
-            // 1. Pinta todo o fundo do quadro de BRANCO SÓLIDO
+            // 1. Pinta todo o fundo do quadro invisível de BRANCO SÓLIDO (#ffffff)
             ctx.fillStyle = "#ffffff";
             ctx.fillRect(0, 0, finalSize, finalSize);
 
-            // 2. Desenha o QR Code por cima do fundo branco
+            // 2. Cola o QR Code por cima do fundo branco
             ctx.drawImage(sourceElement, offset, offset, qrSize, qrSize);
 
-            // 3. Salva como JPEG (JPEG não aceita transparência, garantindo a legibilidade)
+            // 3. Salva a arte final como JPEG (JPEG não suporta transparência, forçando a leitura correta)
             let link = document.createElement("a");
             link.href = tempCanvas.toDataURL("image/jpeg", 1.0);
             
-            // Força a extensão .jpg
+            // Força o nome do arquivo a carregar a matrícula. Facilita se o aluno perder na galeria de fotos.
             link.download = "QRCode_Refeitorio_" + matriculaAtual + ".jpg";
             
+            // O navegador simula o clique num botão de download fantasma.
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
         }
 
+        // =====================================================================
+        // AULA TDS: UX / USABILIDADE E ATALHOS
+        // =====================================================================
+        
+        // Escuta o teclado: Se apertar 'Enter' na caixa de texto, ativa o botão verde.
         document.getElementById("inputMatricula").addEventListener("keypress", function(event) {
             if (event.key === "Enter") {
                 event.preventDefault();
                 gerarCodigo();
             }
         });
+
+        // MELHORIA AULA TDS: Quando a página carregar (onload), já coloca o cursor piscando 
+        // na caixa de matrícula automaticamente, poupando um clique do usuário.
+        window.onload = function() {
+            document.getElementById("inputMatricula").focus();
+        };
     </script>
 </body>
 </html>
