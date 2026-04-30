@@ -31,7 +31,7 @@
             background: white;
             width: 100%;
             max-width: 480px;
-            margin-top: 10px;
+            margin-top: 15px;
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.08);
             overflow: hidden; 
@@ -73,9 +73,9 @@
             border-radius: 8px;
         }
 
-        /* Nova classe exclusiva para aumentar a logo da esquerda */
+       
         .logo-esquerda {
-            max-width: 100px; /* Ajuste este valor se quiser maior ou menor */
+            max-width: 105px; 
         }
 
         
@@ -231,9 +231,9 @@
             margin-top: 15px;
         }
 
-        /* Rodapé */
+        
         .rodape {
-            margin-top: auto;
+            margin-top: 20px;
             padding: 30px 20px;
             text-align: center;
             font-size: 12px;
@@ -309,7 +309,7 @@
                 let matriculaBruta = document.getElementById("inputMatricula").value.trim().toUpperCase().replace(/\s+/g, '');
 
                 if (matriculaBruta === "") {
-                    alert("Por favor, digite sua matrícula primeiro!");
+                    alert("Por favor, digite sua matrícula!");
                     return;
                 }
                 
