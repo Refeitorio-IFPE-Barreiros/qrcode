@@ -205,20 +205,6 @@
             justify-content: center; 
         }
 
-        
-        .hash-texto {
-            font-family: monospace;
-            background: #f8fafc;
-            padding: 8px 15px;
-            border-radius: 8px;
-            font-size: 12px;
-            color: #64748b;
-            word-break: break-all;
-            text-align: center;
-            margin-bottom: 15px;
-            border: 1px dashed #cbd5e1;
-        }
-
         .instrucao {
             text-align: center;
             font-size: 14px;
@@ -278,7 +264,6 @@
         </div>
 
         <div id="area_resultado">
-            <div class="hash-texto" id="txtHash">Hash de Segurança aparecerá aqui</div>
             
             <div class="box-qrcode" id="boxQrCode">
                 </div>
@@ -286,7 +271,7 @@
             <button class="btn-download" onclick="baixarQRCode()">⬇️ BAIXAR QR CODE</button>
             
             <div class="instrucao">
-                ⚠️ Salve ou faça uma captura de tela do QR Code, ou utilize o botão “Baixar QR Code”. Exiba-o no sistema para acessar o refeitório.
+                ⚠️ Faça uma captura de tela do QR Code ou utilize o botão “Baixar QR Code”. Exiba-o no sistema para acessar o refeitório. 
             </div>
         </div>
     </div>
@@ -320,10 +305,6 @@
 
                 
                 document.getElementById("area_resultado").style.display = "flex";
-                
-                
-                let hashResumido = hashSeguro.substring(0, 8) + "......" + hashSeguro.substring(hashSeguro.length - 8);
-                document.getElementById("txtHash").innerText = "Chave Criptografada: " + hashResumido;
 
                 let areaQr = document.getElementById("boxQrCode");
 
