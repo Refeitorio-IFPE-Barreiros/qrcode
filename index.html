@@ -73,6 +73,11 @@
             border-radius: 8px;
         }
 
+        /* Nova classe exclusiva para aumentar a logo da esquerda */
+        .logo-esquerda {
+            max-width: 100px; /* Ajuste este valor se quiser maior ou menor */
+        }
+
         
         .formulario {
             padding: 30px 25px;
@@ -243,7 +248,8 @@
 
     <div class="container">
         <div class="cabecalho">
-            <img src="logo_sistema.png" alt="Logo Sistema" class="logo-img" onerror="this.style.display='none'">
+            <!-- Adicionada a classe logo-esquerda aqui -->
+            <img src="logo_sistema.png" alt="Logo Sistema" class="logo-img logo-esquerda" onerror="this.style.display='none'">
             
             <div class="cabecalho-texto">
                 <h1>Sistema Refeitório</h1>
