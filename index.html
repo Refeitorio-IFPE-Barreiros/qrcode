@@ -8,25 +8,25 @@
     <link rel="icon" type="image/png" href="logo_sistema.png">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <style>
-        
+
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: #f4f7f6; 
-            display: flex; 
-            flex-direction: column; 
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            flex-direction: column;
             align-items: center;
-            min-height: 100vh;   
+            min-height: 100vh;
             color: #333;
         }
 
-        
+
         .container {
             background: white;
             width: 100%;
@@ -34,25 +34,25 @@
             margin-top: 15px;
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            overflow: hidden; 
+            overflow: hidden;
             display: flex;
             flex-direction: column;
         }
 
-       
+
         .cabecalho {
             background-color: #1e7b34;
             color: white;
             padding: 20px 15px;
-            display: flex; 
+            display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 15px;
         }
-        
+
         .cabecalho-texto {
             text-align: center;
-            flex: 1; 
+            flex: 1;
         }
 
         .cabecalho h1 {
@@ -68,37 +68,37 @@
         }
 
         .logo-img {
-            max-width: 75px; 
+            max-width: 75px;
             height: auto;
             border-radius: 8px;
         }
 
-       
+
         .logo-esquerda {
-            max-width: 105px; 
+            max-width: 105px;
         }
 
-        
+
         .formulario {
             padding: 30px 25px;
             display: flex;
             flex-direction: column;
-            gap: 20px; 
+            gap: 20px;
         }
 
-        
+
         .alerta-container {
             display: flex;
             align-items: center;
             background-color: #fffbeb;
-            border-left: 5px solid #f59e0b; 
+            border-left: 5px solid #f59e0b;
             padding: 15px;
             border-radius: 12px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
             gap: 15px;
         }
 
-        
+
         .alerta-icone {
             font-size: 35px;
             animation: chamarAtencao 1.5s infinite;
@@ -106,7 +106,7 @@
 
         @keyframes chamarAtencao {
             0% { transform: scale(1); }
-            50% { transform: scale(1.15); } 
+            50% { transform: scale(1.15); }
             100% { transform: scale(1); }
         }
 
@@ -142,7 +142,7 @@
             transition: border-color 0.3s;
         }
 
-        
+
         .grupo-input input:focus {
             outline: none;
             border-color: #1e7b34;
@@ -161,11 +161,28 @@
             transition: background-color 0.2s, transform 0.1s;
         }
 
-        
+
         .btn-gerar:hover { background-color: #155d27; }
         .btn-gerar:active { transform: scale(0.98); }
-        
-       
+
+        .btn-secundario {
+            background-color: transparent;
+            color: #1e7b34;
+            border: 2px solid #1e7b34;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .btn-secundario:hover {
+            background-color: #1e7b34;
+            color: white;
+        }
+
+
         .btn-download {
             background-color: #0ea5e9;
             color: white;
@@ -181,9 +198,50 @@
         }
         .btn-download:hover { background-color: #0284c7; }
 
-        
+
+        /* --- Tela de confirmação --- */
+        #area_confirmacao {
+            display: none;
+            flex-direction: column;
+            padding: 0 25px 30px 25px;
+            gap: 18px;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .confirmacao-caixa {
+            background-color: #f0fdf4;
+            border: 2px solid #1e7b34;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .confirmacao-caixa p {
+            font-size: 12px;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .confirmacao-matricula {
+            font-size: 24px;
+            font-weight: 800;
+            color: #1e7b34;
+            letter-spacing: 1px;
+            word-break: break-all;
+        }
+
+        .confirmacao-botoes {
+            display: flex;
+            gap: 10px;
+        }
+
+        .confirmacao-botoes button { flex: 1; }
+
+
         #area_resultado {
-            display: none; 
+            display: none;
             flex-direction: column;
             align-items: center;
             padding: 0 25px 30px 25px;
@@ -200,9 +258,27 @@
             padding: 15px;
             border-radius: 15px;
             border: 2px solid #e2e8f0;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             display: flex;
-            justify-content: center; 
+            justify-content: center;
+        }
+
+        .matricula-resultado {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 800;
+            color: #1e7b34;
+            margin-bottom: 15px;
+            letter-spacing: 0.5px;
+        }
+
+        .matricula-resultado span {
+            display: block;
+            font-size: 11px;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 800;
+            margin-bottom: 4px;
         }
 
         .instrucao {
@@ -217,7 +293,7 @@
             margin-top: 15px;
         }
 
-        
+
         .rodape {
             margin-top: 20px;
             padding: 30px 20px;
@@ -234,22 +310,21 @@
 
     <div class="container">
         <div class="cabecalho">
-            <!-- Adicionada a classe logo-esquerda aqui -->
             <img src="logo_sistema.png" alt="Logo Sistema" class="logo-img logo-esquerda" onerror="this.style.display='none'">
-            
+
             <div class="cabecalho-texto">
                 <h1>Sistema Refeitório</h1>
                 <p>IFPE - Campus Barreiros</p><br>
                 <strong><p>Gerador de QR Code para Acesso ao Refeitório</p></strong>
             </div>
-            
+
             <img src="logo_ifpe.png" alt="Logo IFPE" class="logo-img" onerror="this.style.display='none'">
         </div>
 
-        <div class="formulario">
-            
+        <div class="formulario" id="area_formulario">
+
             <div class="alerta-container">
-                <div class="alerta-icone">🧑‍🎓</div>
+                <div class="alerta-icone" aria-hidden="true">🧑‍🎓</div>
                 <div class="alerta-texto">
                     <strong>ATENÇÃO ALUNO(A):</strong><br>
                     O QR Code gerado é baseado na matrícula informada. Caso a matrícula esteja incorreta ou contenha erros de digitação, o sistema do refeitório <strong>NÃO</strong> liberará a sua refeição. Digite a matrícula exatamente como foi repassada a você.
@@ -258,57 +333,89 @@
 
             <div class="grupo-input">
                 <label for="inputMatricula">Digite sua Matrícula OFICIAL:</label>
-                <input type="text" id="inputMatricula" placeholder="Ex: 20261TDS01" autocomplete="off">
+                <input type="text" id="inputMatricula" placeholder="Ex: 20261TDS01" autocomplete="off" maxlength="30">
             </div>
-            <button class="btn-gerar" onclick="gerarCodigo()">GERAR MEU QR CODE</button>
+            <button class="btn-gerar" onclick="revisarMatricula()">GERAR MEU QR CODE</button>
+        </div>
+
+        <!-- Tela de confirmação, exibida antes de gerar o QR de fato -->
+        <div id="area_confirmacao">
+            <div class="confirmacao-caixa">
+                <p>Confira se digitou certo</p>
+                <div class="confirmacao-matricula" id="textoConfirmacao"></div>
+            </div>
+            <div class="confirmacao-botoes">
+                <button class="btn-secundario" onclick="corrigirMatricula()">✏️ CORRIGIR</button>
+                <button class="btn-gerar" onclick="gerarCodigo()">✅ CONFIRMAR E GERAR</button>
+            </div>
         </div>
 
         <div id="area_resultado">
-            
+
+            <div class="matricula-resultado">
+                <span>Matrícula usada neste QR Code</span>
+                <div id="textoMatriculaResultado"></div>
+            </div>
+
             <div class="box-qrcode" id="boxQrCode">
                 </div>
-            
+
             <button class="btn-download" onclick="baixarQRCode()">⬇️ BAIXAR QR CODE</button>
-            
+            <button class="btn-secundario" style="margin-top: 10px; width: 100%;" onclick="gerarNovamente()">🔄 GERAR OUTRO QR CODE</button>
+
             <div class="instrucao">
-                ⚠️ Faça uma captura de tela do QR Code ou utilize o botão “Baixar QR Code”. Exiba-o no sistema para acessar o refeitório. 
+                ⚠️ Faça uma captura de tela do QR Code ou utilize o botão "Baixar QR Code". Exiba-o no sistema para acessar o refeitório.
             </div>
         </div>
     </div>
 
     <div class="rodape">
-        <strong>Informações do Desenvolvedor:</strong><br>
-        Desenvolvido por: Prof. Vinícius Oliveira<br>
+        Desenvolvido por: Prof. Vinícius<br>
         IFPE - Campus Barreiros<br>
+        Dúvidas ou problemas: procure o CGAE<br>
         Versão 1.0 / 2026
     </div>
 
     <script>
-        let qrcode_desenho = null; 
-        let matriculaAtual = ""; 
+        let qrcode_desenho = null;
+        let matriculaAtual = "";
 
-       
+        // Passo 1: valida se o campo não está vazio e mostra a tela de confirmação
+        function revisarMatricula() {
+            let matriculaBruta = document.getElementById("inputMatricula").value.trim().toUpperCase().replace(/\s+/g, '');
+
+            if (matriculaBruta === "") {
+                alert("Por favor, digite sua matrícula!");
+                return;
+            }
+
+            matriculaAtual = matriculaBruta;
+
+            document.getElementById("textoConfirmacao").textContent = matriculaAtual;
+            document.getElementById("area_formulario").style.display = "none";
+            document.getElementById("area_confirmacao").style.display = "flex";
+        }
+
+        // Volta para o formulário, mantendo o que já foi digitado para o aluno corrigir
+        function corrigirMatricula() {
+            document.getElementById("area_confirmacao").style.display = "none";
+            document.getElementById("area_formulario").style.display = "flex";
+            let campo = document.getElementById("inputMatricula");
+            campo.focus();
+            campo.select();
+        }
+
+        // Passo 2: gera o hash e o QR Code de fato, só depois da confirmação
         function gerarCodigo() {
             try {
-                
-                let matriculaBruta = document.getElementById("inputMatricula").value.trim().toUpperCase().replace(/\s+/g, '');
+                let hashSeguro = CryptoJS.SHA256(matriculaAtual).toString(CryptoJS.enc.Hex).toUpperCase();
 
-                if (matriculaBruta === "") {
-                    alert("Por favor, digite sua matrícula!");
-                    return;
-                }
-                
-                matriculaAtual = matriculaBruta; 
-
-                
-                let hashSeguro = CryptoJS.SHA256(matriculaBruta).toString(CryptoJS.enc.Hex).toUpperCase();
-
-                
+                document.getElementById("area_confirmacao").style.display = "none";
                 document.getElementById("area_resultado").style.display = "flex";
+                document.getElementById("textoMatriculaResultado").textContent = matriculaAtual;
 
                 let areaQr = document.getElementById("boxQrCode");
 
-                
                 if (qrcode_desenho === null) {
                     qrcode_desenho = new QRCode(areaQr, {
                         text: hashSeguro,
@@ -316,7 +423,7 @@
                         height: 220,
                         colorDark : "#000000",
                         colorLight : "#ffffff",
-                        correctLevel : QRCode.CorrectLevel.H 
+                        correctLevel : QRCode.CorrectLevel.H
                     });
                 } else {
                     qrcode_desenho.clear();
@@ -329,61 +436,60 @@
             }
         }
 
-        
+        // Reseta tudo para o aluno gerar o QR de outra matrícula
+        function gerarNovamente() {
+            document.getElementById("area_resultado").style.display = "none";
+            document.getElementById("area_formulario").style.display = "flex";
+            document.getElementById("inputMatricula").value = "";
+            document.getElementById("inputMatricula").focus();
+        }
+
         function baixarQRCode() {
             let container = document.getElementById("boxQrCode");
             let img = container.querySelector("img");
             let originalCanvas = container.querySelector("canvas");
-            
-            
+
             let sourceElement = (img && img.src) ? img : originalCanvas;
-            
+
             if (!sourceElement) {
                 alert("Erro: O QR Code ainda não foi gerado.");
                 return;
             }
 
-            
             let tempCanvas = document.createElement("canvas");
             let ctx = tempCanvas.getContext("2d");
 
-            
             let finalSize = 260;
             let qrSize = 220;
-            let offset = (finalSize - qrSize) / 2; 
+            let offset = (finalSize - qrSize) / 2;
 
             tempCanvas.width = finalSize;
             tempCanvas.height = finalSize;
 
-            
             ctx.fillStyle = "#ffffff";
             ctx.fillRect(0, 0, finalSize, finalSize);
 
-           
             ctx.drawImage(sourceElement, offset, offset, qrSize, qrSize);
 
-            
             let link = document.createElement("a");
             link.href = tempCanvas.toDataURL("image/jpeg", 1.0);
-            
-            
-            link.download = "QRCode_Refeitorio_" + matriculaAtual + ".jpg";
-            
-            
+
+            // Sanitiza a matrícula para evitar caracteres inválidos no nome do arquivo
+            let matriculaSegura = matriculaAtual.replace(/[^a-zA-Z0-9]/g, "_");
+            link.download = "QRCode_Refeitorio_" + matriculaSegura + ".jpg";
+
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
         }
 
-        
         document.getElementById("inputMatricula").addEventListener("keypress", function(event) {
             if (event.key === "Enter") {
                 event.preventDefault();
-                gerarCodigo();
+                revisarMatricula();
             }
         });
 
-        
         window.onload = function() {
             document.getElementById("inputMatricula").focus();
         };
