@@ -416,6 +416,17 @@
 
                 let areaQr = document.getElementById("boxQrCode");
 
+                // AULA TDS: CORRIGIDO — trocado de CorrectLevel.H (Alto, ~30% de
+                // redundância) para CorrectLevel.M (Médio, ~15%), que é o mesmo nível
+                // que a biblioteca Python "qrcode" usa por padrão no sistema interno
+                // (cadastro_alunos.py, gerador de crachás, etc.). O nível H deixava o
+                // QR Code visualmente mais "denso" (mais quadradinhos pretos por área),
+                // o que fazia os leitores levarem mais tempo pra decodificar — ou até
+                // falharem — especialmente em telas de celular pequenas/com brilho ruim.
+                // Como o dado aqui é um hash fixo (64 caracteres) exibido na TELA do
+                // celular (não impresso, sujeito a rasura/dano físico), não precisa do
+                // nível de redundância mais alto — H é pensado pra QR Codes impressos
+                // que podem sofrer desgaste, arranhões, sujeira, etc.
                 if (qrcode_desenho === null) {
                     qrcode_desenho = new QRCode(areaQr, {
                         text: hashSeguro,
@@ -423,7 +434,7 @@
                         height: 220,
                         colorDark : "#000000",
                         colorLight : "#ffffff",
-                        correctLevel : QRCode.CorrectLevel.H
+                        correctLevel : QRCode.CorrectLevel.M
                     });
                 } else {
                     qrcode_desenho.clear();
