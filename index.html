@@ -9,8 +9,9 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js" integrity="sha384-S3wQ/l0OsbJoFeJC81UIr3JOlx/OzNJpRt1bV+yhpWQxPAahfpQtpxBSfn+Isslc" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha384-3zSEDfvllQohrq0PHL1fOXJuC/jSOO34H46t6UQfobFOmxE5BpjjaIJY5F2/bMnU" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha384-JcnsjUPPylna1s1fvi1u12X5qjY5OL56iySh75FdtrwhO/SWXgMjoVqcKyIIWOLk" crossorigin="anonymous"></script>
 
     <style>
 
@@ -183,20 +184,72 @@
         }
 
 
-        .btn-download {
-            background-color: #0ea5e9;
+        .grupo-downloads {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        /* AULA TDS: estilo compartilhado pelos dois botões — organiza o conteúdo
+           em COLUNA (a seta fica numa linha, o ícone+texto na linha de baixo),
+           em vez do texto corrido de antes. */
+        .btn-download, .btn-pdf {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
             color: white;
             border: none;
-            padding: 12px 20px;
+            padding: 10px 20px;
             border-radius: 8px;
             font-size: 14px;
             font-weight: 800;
             cursor: pointer;
             width: 100%;
-            margin-top: 15px;
             transition: background-color 0.2s;
         }
+
+        /* AULA TDS: a seta usa SVG (não emoji) de propósito — emoji ignora a cor
+           definida em CSS (cada sistema operacional desenha do jeito dele), então
+           não tinha como garantir a cor exata que quiséssemos. Com SVG e
+           stroke="currentColor" no HTML, a cor definida aqui em CSS (.seta-download)
+           é respeitada em qualquer navegador/aparelho. Desenho mais "cheio" (círculo
+           de fundo + seta com barra embaixo) em vez de um traço fino sozinho — fica
+           mais parecido com um ícone de "baixar" de verdade. */
+        .seta-download {
+            color: white;
+        }
+
+        /* AULA TDS: mesmo motivo da seta — os ícones de tipo de arquivo (imagem/
+           documento) também usam SVG, não emoji. O emoji de imagem (🖼️) em
+           especial tem suporte inconsistente entre navegadores/sistemas — em
+           alguns nem aparece. SVG garante que sempre aparece, igual em qualquer
+           aparelho. */
+        .icone-arquivo {
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .linha-icone-texto {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-download {
+            background-color: #0ea5e9;
+        }
         .btn-download:hover { background-color: #0284c7; }
+
+        /* AULA TDS: mesma cor vermelha usada pro botão de "Exportar PDF" no
+           painel interativo do sistema (automacao_relatorio.py) — mantém a
+           mesma linguagem visual: vermelho = ação de exportar em PDF, em
+           qualquer tela do sistema. */
+        .btn-pdf {
+            background-color: #dc3545;
+        }
+        .btn-pdf:hover { background-color: #c82333; }
 
 
         /* --- Tela de confirmação --- */
@@ -251,6 +304,59 @@
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ==========================================================================
+           AULA TDS: ILUSTRAÇÃO DE "RECOMPENSA" — momento em que o QR fica pronto
+           ==========================================================================
+           Em vez de espalhar animação pela página inteira, colocamos UM momento
+           marcante: bem na hora em que o aluno recebe o QR Code (o "prêmio" da
+           interação — ele já pode ir comer). Um prato com garfo/faca, entrando com
+           uma animação de "chegada" (bounce), e uma fumacinha subindo em loop —
+           reforça visualmente "refeição quentinha te esperando", sem competir com
+           o conteúdo funcional (QR Code, matrícula) que continua sendo o foco. */
+        .selo-pronto {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .selo-pronto svg {
+            width: 64px;
+            height: 64px;
+        }
+
+        .selo-pronto-texto {
+            font-size: 13px;
+            font-weight: 800;
+            color: #1e7b34;
+            margin-top: 2px;
+        }
+
+        @media (prefers-reduced-motion: no-preference) {
+            .selo-pronto {
+                animation: chegadaComBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+            }
+            .fumaca-linha {
+                animation: subirFumaca 2.2s ease-in-out infinite;
+                transform-origin: bottom center;
+            }
+            .fumaca-linha:nth-child(2) { animation-delay: 0.3s; }
+            .fumaca-linha:nth-child(3) { animation-delay: 0.6s; }
+        }
+
+        @keyframes chegadaComBounce {
+            0% { opacity: 0; transform: scale(0.3) translateY(12px); }
+            60% { opacity: 1; transform: scale(1.08) translateY(-2px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        @keyframes subirFumaca {
+            0% { opacity: 0; transform: translateY(0) scaleY(0.7); }
+            30% { opacity: 0.8; }
+            80% { opacity: 0; transform: translateY(-9px) scaleY(1.1); }
+            100% { opacity: 0; transform: translateY(-9px); }
         }
 
         .box-qrcode {
@@ -315,7 +421,7 @@
             <div class="cabecalho-texto">
                 <h1>Sistema Refeitório</h1>
                 <p>IFPE - Campus Barreiros</p><br>
-                <strong><p>Gerador de QR Code para Acesso ao Refeitório</p></strong>
+                <p><strong>Gerador de QR Code para Acesso ao Refeitório</strong></p>
             </div>
 
             <img src="logo_ifpe.png" alt="Logo IFPE" class="logo-img" onerror="this.style.display='none'">
@@ -352,6 +458,17 @@
 
         <div id="area_resultado">
 
+            <div class="selo-pronto">
+                <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                    <path class="fumaca-linha" d="M22 22c-3-3-3-6 0-9" stroke="#94a3b8" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+                    <path class="fumaca-linha" d="M32 20c-3-3-3-6 0-9" stroke="#94a3b8" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+                    <path class="fumaca-linha" d="M42 22c-3-3-3-6 0-9" stroke="#94a3b8" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+                    <ellipse cx="32" cy="42" rx="20" ry="8" fill="#e9f5ec" stroke="#1e7b34" stroke-width="2"/>
+                    <ellipse cx="32" cy="40" rx="12" ry="4" fill="none" stroke="#1e7b34" stroke-width="1.5" opacity="0.5"/>
+                </svg>
+                <span class="selo-pronto-texto">Pronto! Já pode usar O QR Code no refeitório.</span>
+            </div>
+
             <div class="matricula-resultado">
                 <span>Matrícula usada neste QR Code</span>
                 <div id="textoMatriculaResultado"></div>
@@ -360,11 +477,45 @@
             <div class="box-qrcode" id="boxQrCode">
                 </div>
 
-            <button class="btn-download" onclick="baixarQRCode()">⬇️ BAIXAR QR CODE</button>
+            <div class="grupo-downloads">
+                <button class="btn-download" onclick="baixarQRCode()">
+                    <svg class="seta-download" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10" fill="rgba(255,255,255,0.15)" stroke="none"/>
+                        <path d="M12 7v7"/>
+                        <path d="M9 11l3 3 3-3"/>
+                        <path d="M8 17h8"/>
+                    </svg>
+                    <span class="linha-icone-texto">
+                        <svg class="icone-arquivo" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="3"/>
+                            <circle cx="8.5" cy="8.5" r="1.5"/>
+                            <path d="M21 15l-5-5L5 21"/>
+                        </svg>
+                        PNG
+                    </span>
+                </button>
+                <button class="btn-pdf" onclick="baixarQRCodePDF()">
+                    <svg class="seta-download" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10" fill="rgba(255,255,255,0.15)" stroke="none"/>
+                        <path d="M12 7v7"/>
+                        <path d="M9 11l3 3 3-3"/>
+                        <path d="M8 17h8"/>
+                    </svg>
+                    <span class="linha-icone-texto">
+                        <svg class="icone-arquivo" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                        </svg>
+                        PDF
+                    </span>
+                </button>
+            </div>
             <button class="btn-secundario" style="margin-top: 10px; width: 100%;" onclick="gerarNovamente()">🔄 GERAR OUTRO QR CODE</button>
 
             <div class="instrucao">
-                ⚠️ Faça uma captura de tela do QR Code ou utilize o botão "Baixar QR Code". Exiba-o no sistema para acessar o refeitório.
+                ⚠️ Faça uma captura de tela do QR Code ou utilize os botões "PNG" ou "PDF" para baixá-lo. Exiba-o no sistema para acessar o refeitório.
             </div>
         </div>
     </div>
@@ -455,7 +606,11 @@
             document.getElementById("inputMatricula").focus();
         }
 
-        function baixarQRCode() {
+        // AULA TDS: função compartilhada — monta o canvas final (QR Code centralizado
+        // num fundo branco) uma única vez, reaproveitado tanto pelo download em PNG
+        // quanto pelo em PDF. Evita ter essa lógica duplicada em dois lugares (mesmo
+        // risco de divergência que já corrigimos várias vezes no resto do sistema).
+        function gerarCanvasQRCode() {
             let container = document.getElementById("boxQrCode");
             let img = container.querySelector("img");
             let originalCanvas = container.querySelector("canvas");
@@ -463,8 +618,7 @@
             let sourceElement = (img && img.src) ? img : originalCanvas;
 
             if (!sourceElement) {
-                alert("Erro: O QR Code ainda não foi gerado.");
-                return;
+                return null;
             }
 
             let tempCanvas = document.createElement("canvas");
@@ -482,16 +636,97 @@
 
             ctx.drawImage(sourceElement, offset, offset, qrSize, qrSize);
 
+            return tempCanvas;
+        }
+
+        function baixarQRCode() {
+            let tempCanvas = gerarCanvasQRCode();
+
+            if (!tempCanvas) {
+                alert("Erro: O QR Code ainda não foi gerado.");
+                return;
+            }
+
             let link = document.createElement("a");
-            link.href = tempCanvas.toDataURL("image/jpeg", 1.0);
+            // AULA TDS: CORRIGIDO — trocado de JPEG (compressão COM perda) para PNG
+            // (SEM perda). QR Code é feito de blocos pretos/brancos com bordas bem
+            // nítidas — a compressão do JPEG (mesmo em qualidade máxima) pode borrar
+            // levemente essas bordas, o que vai contra o objetivo de deixar o QR
+            // fácil/rápido de ler pelo leitor. PNG preserva os pixels exatamente
+            // como estão, sem nenhum tipo de perda.
+            link.href = tempCanvas.toDataURL("image/png");
 
             // Sanitiza a matrícula para evitar caracteres inválidos no nome do arquivo
             let matriculaSegura = matriculaAtual.replace(/[^a-zA-Z0-9]/g, "_");
-            link.download = "QRCode_Refeitorio_" + matriculaSegura + ".jpg";
+            link.download = "QRCode_Refeitorio_" + matriculaSegura + ".png";
 
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+        }
+
+        // AULA TDS: monta um PDF de página inteira (A4) com o QR Code centralizado,
+        // a matrícula escrita por extenso, e uma instrução rápida — pensado pra quem
+        // quiser IMPRIMIR o crachá em papel, em vez de só guardar a imagem no celular.
+        // Usa jsPDF, que já vem com um método pronto (addImage) pra inserir uma
+        // imagem dentro do PDF — bem mais simples que o html2pdf usado no painel
+        // interativo do sistema, já que aqui não tem uma página HTML inteira pra
+        // capturar, só uma imagem.
+        function baixarQRCodePDF() {
+            let tempCanvas = gerarCanvasQRCode();
+
+            if (!tempCanvas) {
+                alert("Erro: O QR Code ainda não foi gerado.");
+                return;
+            }
+
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+
+                const larguraPagina = doc.internal.pageSize.getWidth();
+
+                // Cabeçalho
+                doc.setFontSize(18);
+                doc.setTextColor(30, 123, 52); // #1e7b34, o verde do sistema
+                doc.setFont(undefined, "bold");
+                doc.text("Sistema Refeitório", larguraPagina / 2, 30, { align: "center" });
+
+                doc.setFontSize(12);
+                doc.setTextColor(100, 116, 139);
+                doc.setFont(undefined, "normal");
+                doc.text("IFPE - Campus Barreiros", larguraPagina / 2, 38, { align: "center" });
+
+                // QR Code centralizado
+                const tamanhoQr = 80; // em mm
+                const posX = (larguraPagina - tamanhoQr) / 2;
+                const imagemPng = tempCanvas.toDataURL("image/png");
+                doc.addImage(imagemPng, "PNG", posX, 55, tamanhoQr, tamanhoQr);
+
+                // Matrícula por extenso, logo abaixo do QR Code
+                doc.setFontSize(16);
+                doc.setTextColor(30, 123, 52);
+                doc.setFont(undefined, "bold");
+                doc.text(matriculaAtual, larguraPagina / 2, 150, { align: "center" });
+
+                doc.setFontSize(10);
+                doc.setTextColor(100, 116, 139);
+                doc.setFont(undefined, "normal");
+                doc.text("Matrícula usada neste QR Code", larguraPagina / 2, 144, { align: "center" });
+
+                // Instrução, mesma mensagem que já aparece na tela
+                doc.setFontSize(11);
+                doc.setTextColor(217, 119, 6);
+                doc.setFont(undefined, "bold");
+                const instrucao = "Exiba este QR Code no sistema para acessar o refeitório.";
+                doc.text(instrucao, larguraPagina / 2, 170, { align: "center" });
+
+                const matriculaSegura = matriculaAtual.replace(/[^a-zA-Z0-9]/g, "_");
+                doc.save("QRCode_Refeitorio_" + matriculaSegura + ".pdf");
+            } catch (erro) {
+                console.error(erro);
+                alert("Ops! Não foi possível gerar o PDF.\n\nDetalhe: " + erro.message);
+            }
         }
 
         document.getElementById("inputMatricula").addEventListener("keypress", function(event) {
