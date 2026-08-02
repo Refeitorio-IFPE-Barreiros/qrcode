@@ -466,13 +466,13 @@
                     <ellipse cx="32" cy="42" rx="20" ry="8" fill="#e9f5ec" stroke="#1e7b34" stroke-width="2"/>
                     <ellipse cx="32" cy="40" rx="12" ry="4" fill="none" stroke="#1e7b34" stroke-width="1.5" opacity="0.5"/>
                 </svg>
-                <span class="selo-pronto-texto">Pronto! Já pode usar o QR Code no refeitório.</span>
+                <span class="selo-pronto-texto">Pronto! Já pode usar no refeitório.</span>
             </div>
 
-           <!-- <div class="matricula-resultado">
+            <div class="matricula-resultado">
                 <span>Matrícula usada neste QR Code</span>
                 <div id="textoMatriculaResultado"></div>
-            </div>-->
+            </div>
 
             <div class="box-qrcode" id="boxQrCode">
                 </div>
@@ -703,23 +703,20 @@
                 const imagemPng = tempCanvas.toDataURL("image/png");
                 doc.addImage(imagemPng, "PNG", posX, 55, tamanhoQr, tamanhoQr);
 
-                // Matrícula por extenso, logo abaixo do QR Code
-                doc.setFontSize(16);
-                doc.setTextColor(30, 123, 52);
-                doc.setFont(undefined, "bold");
-                doc.text(matriculaAtual, larguraPagina / 2, 150, { align: "center" });
-
-                doc.setFontSize(10);
-                doc.setTextColor(100, 116, 139);
-                doc.setFont(undefined, "normal");
-                doc.text("Matrícula usada neste QR Code", larguraPagina / 2, 144, { align: "center" });
+                // AULA TDS: CORRIGIDO — removida a matrícula em texto puro do PDF, por
+                // privacidade. O hash no QR Code existe justamente pra não expor a
+                // matrícula diretamente — escrevê-la de novo aqui do lado do QR Code
+                // anularia essa proteção se o papel for impresso e deixado à vista, ou
+                // simplesmente compartilhado. A matrícula continua visível NA TELA
+                // (pra o aluno conferir o que está gerando), só não vai mais pro arquivo
+                // baixado/impresso.
 
                 // Instrução, mesma mensagem que já aparece na tela
                 doc.setFontSize(11);
                 doc.setTextColor(217, 119, 6);
                 doc.setFont(undefined, "bold");
                 const instrucao = "Exiba este QR Code no sistema para acessar o refeitório.";
-                doc.text(instrucao, larguraPagina / 2, 170, { align: "center" });
+                doc.text(instrucao, larguraPagina / 2, 150, { align: "center" });
 
                 const matriculaSegura = matriculaAtual.replace(/[^a-zA-Z0-9]/g, "_");
                 doc.save("QRCode_Refeitorio_" + matriculaSegura + ".pdf");
