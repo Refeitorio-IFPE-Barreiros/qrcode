@@ -7,7 +7,15 @@
 
     <link rel="icon" type="image/png" href="logo_sistema.png">
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <!-- AULA TDS: CORRIGIDO — adicionado o peso 700 (":wght@400;600;700;800").
+         Essa página tem 3 tags <strong> no HTML (negrito nativo do navegador,
+         que É o peso 700), mas esse peso nunca tinha sido carregado do Google
+         Fonts — só 400/600/800. Sem o peso pedido realmente disponível, o
+         navegador "fabrica" um negrito falso (faux bold), esticando outro
+         peso — pode ficar visualmente inconsistente dependendo do navegador/
+         sistema. Mesmo problema (e mesma correção) já aplicado no painel
+         interativo do sistema (automacao_relatorio.py). -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js" integrity="sha384-S3wQ/l0OsbJoFeJC81UIr3JOlx/OzNJpRt1bV+yhpWQxPAahfpQtpxBSfn+Isslc" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha384-3zSEDfvllQohrq0PHL1fOXJuC/jSOO34H46t6UQfobFOmxE5BpjjaIJY5F2/bMnU" crossorigin="anonymous"></script>
@@ -521,7 +529,6 @@
     </div>
 
     <div class="rodape">
-        Desenvolvido por: Prof. Vinícius<br>
         IFPE - Campus Barreiros<br>
         Dúvidas ou problemas: procure o CGAE<br>
         Versão 1.0 / 2026
