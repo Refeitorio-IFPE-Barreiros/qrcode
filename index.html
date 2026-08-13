@@ -110,7 +110,18 @@
 
         .alerta-icone {
             font-size: 35px;
-            animation: chamarAtencao 1.5s infinite;
+        }
+
+        /* AULA TDS: CORRIGIDO — animação movida pra dentro do bloco de
+           prefers-reduced-motion, igual as outras animações da página
+           (selo "Pronto!" e a fumacinha). Antes, essa era a ÚNICA animação
+           que ignorava a preferência de "reduzir movimento" do usuário —
+           inconsistente com o resto da página, e ruim especificamente pra
+           quem tem essa preferência ativada por sensibilidade a movimento. */
+        @media (prefers-reduced-motion: no-preference) {
+            .alerta-icone {
+                animation: chamarAtencao 1.5s infinite;
+            }
         }
 
         @keyframes chamarAtencao {
@@ -416,8 +427,6 @@
             color: #64748b;
             line-height: 1.6;
         }
-
-        .rodape strong { color: #1e7b34; }
     </style>
 </head>
 <body>
