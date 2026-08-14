@@ -742,10 +742,36 @@
             }
         }
 
-        document.getElementById("inputMatricula").addEventListener("keypress", function(event) {
-            if (event.key === "Enter") {
+        // AULA TDS: CORRIGIDO — "keypress" é um evento OBSOLETO (deprecated)
+        // no padrão web oficial. Ainda funciona hoje em todos os navegadores,
+        // mas não há garantia de que continue funcionando pra sempre.
+        // "keydown" faz o mesmo papel aqui (detectar a tecla Enter), sem
+        // depender de uma API já marcada como descontinuada.
+        //
+        // Também estendido pra tela de CONFIRMAÇÃO: antes, o Enter só
+        // funcionava no campo de digitar a matrícula — na tela seguinte
+        // ("Confira se digitou certo"), era preciso clicar no botão na mão.
+        // Agora funciona nos dois passos.
+        //
+        // UM ÚNICO escutador no document (em vez de um no campo + outro no
+        // document) — a versão inicial com dois escutadores tinha um bug
+        // real: como o evento do campo "borbulha" até o document na MESMA
+        // execução, os dois disparavam em sequência pro mesmo Enter,
+        // pulando a tela de confirmação sem querer (ia direto pra geração).
+        // Com um escutador só, que confere qual tela está visível NO
+        // MOMENTO do Enter, cada tecla dispara exatamente uma ação.
+        document.addEventListener("keydown", function(event) {
+            if (event.key !== "Enter") return;
+
+            const telaFormularioVisivel = document.getElementById("area_formulario").style.display !== "none";
+            const telaConfirmacaoVisivel = document.getElementById("area_confirmacao").style.display !== "none";
+
+            if (telaFormularioVisivel) {
                 event.preventDefault();
                 revisarMatricula();
+            } else if (telaConfirmacaoVisivel) {
+                event.preventDefault();
+                gerarCodigo();
             }
         });
 
