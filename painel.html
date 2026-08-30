@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Refeitório - IFPE Barreiros</title>
+
+    <!--
+    AULA TDS: PÁGINA DE REDIRECIONAMENTO — não é o painel em si, só uma ponte
+    intermediária que existe pra resolver um problema real e confirmado:
+
+    O link direto do Apps Script (script.google.com/macros/s/.../exec) é
+    reescrito automaticamente pelo GMAIL quando exibido pra alguém logado
+    com uma conta Google Workspace da mesma organização (@barreiros.ifpe.edu.br)
+    — o Gmail adiciona "/a/barreiros.ifpe.edu.br/" no meio da URL por conta
+    própria, antes mesmo do link chegar no navegador. Essa reescrita causa
+    problemas quando o navegador (geralmente o Chrome) tem MAIS DE UMA conta
+    Google logada ao mesmo tempo: em vez de abrir o painel, o Google tenta
+    casar a conta certa daquele domínio e acaba redirecionando pro Google
+    Drive, com o erro "arquivo não pode ser exibido" — mesmo o link estando
+    correto no fundo.
+
+    A solução: em vez de mandar as pessoas direto pra uma URL script.google.com
+    (que o Gmail reconhece e mexe), o e-mail agora leva pra ESTA página, num
+    domínio comum (github.io) que o Gmail não tem motivo nenhum pra reescrever.
+    Esta página, assim que carrega, redireciona (via JavaScript, no próprio
+    navegador da pessoa) pro Apps Script de verdade — sem passar pela
+    complicação de conta que causava o problema.
+
+    MANUTENÇÃO: se um dia o Apps Script for republicado com uma URL nova
+    (nova implantação), atualize só a constante DESTINO_PAINEL abaixo — não
+    precisa mexer em mais nada.
+    -->
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .spinner {
+            width: 42px;
+            height: 42px;
+            border: 4px solid #e2e8f0;
+            border-top-color: #1e7b34;
+            border-radius: 50%;
+            animation: girar 0.8s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes girar {
+            to { transform: rotate(360deg); }
+        }
+        h1 {
+            font-size: 18px;
+            color: #1e7b34;
+            margin: 0 0 8px 0;
+        }
+        p {
+            font-size: 14px;
+            color: #64748b;
+            margin: 0;
+        }
+        a {
+            color: #1e7b34;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="spinner" aria-hidden="true"></div>
+    <h1>Abrindo o Painel do Refeitório...</h1>
+    <p>Se não abrir automaticamente em alguns segundos, <a id="link-manual" href="#">clique aqui</a>.</p>
+
+    <script>
+        // AULA TDS: atualize esta URL sempre que o Apps Script for
+        // republicado com uma nova implantação. Use SEMPRE a versão SEM
+        // "/a/dominio/" no meio (ver aviso completo em automacao_relatorio.py).
+        var DESTINO_PAINEL = "https://script.google.com/macros/s/AKfycbwyEaJx35VuwBB37vFdPSEJvDaiTu1EJKloLmaXL799zE5AGYZAyrceVXNIYZnpeFC5dg/exec";
+
+        // Encaminha qualquer parâmetro que a página tenha recebido (ex: ?senha=...,
+        // caso alguém tenha favoritado um link já com a senha) para o destino final.
+        var destinoFinal = DESTINO_PAINEL + window.location.search;
+
+        document.getElementById('link-manual').href = destinoFinal;
+
+        // .replace() no lugar de mudar window.location.href diretamente: não
+        // deixa esta página de redirecionamento no histórico do navegador,
+        // então o botão "voltar" da pessoa não fica preso aqui depois.
+        window.location.replace(destinoFinal);
+    </script>
+</body>
+</html>
