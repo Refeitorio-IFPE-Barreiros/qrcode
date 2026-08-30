@@ -6,26 +6,31 @@
     <title>Painel do Refeitório - IFPE Barreiros</title>
 
     <!--
-    AULA TDS: PÁGINA DE REDIRECIONAMENTO — não é o painel em si, só uma ponte
-    intermediária que existe pra resolver um problema real e confirmado:
+    AULA TDS: CORRIGIDO — versão anterior desta página fazia um
+    REDIRECIONAMENTO de topo (window.location.replace) pro Apps Script.
+    Isso resolvia o problema do Gmail reescrevendo o link na hora de
+    EXIBIR, mas não resolvia um problema mais profundo, descoberto depois:
+    em CELULAR (Android/iPhone), o próprio sistema/app intercepta a
+    NAVEGAÇÃO DE TOPO pra domínios "script.google.com" e tenta rotear pela
+    conta Google logada no aparelho — mesmo vindo de um redirecionamento
+    JavaScript, não só de um clique direto em e-mail. O resultado era o
+    mesmo problema de sempre (Google Drive, "arquivo não pode ser
+    exibido"), só que agora com uma URL ainda mais estranha
+    (".../a/macros/dominio/s/.../exec").
 
-    O link direto do Apps Script (script.google.com/macros/s/.../exec) é
-    reescrito automaticamente pelo GMAIL quando exibido pra alguém logado
-    com uma conta Google Workspace da mesma organização (@barreiros.ifpe.edu.br)
-    — o Gmail adiciona "/a/barreiros.ifpe.edu.br/" no meio da URL por conta
-    própria, antes mesmo do link chegar no navegador. Essa reescrita causa
-    problemas quando o navegador (geralmente o Chrome) tem MAIS DE UMA conta
-    Google logada ao mesmo tempo: em vez de abrir o painel, o Google tenta
-    casar a conta certa daquele domínio e acaba redirecionando pro Google
-    Drive, com o erro "arquivo não pode ser exibido" — mesmo o link estando
-    correto no fundo.
+    A SOLUÇÃO: em vez de REDIRECIONAR o navegador pra lá (uma navegação de
+    topo, que é o que essas interceptações de app miram), esta página
+    agora INCORPORA o painel dentro de si mesma, usando um <iframe>. Um
+    iframe é só um pedido de SUB-RECURSO da página (como uma imagem ou um
+    vídeo embutido) — o navegador nunca "vai" pra script.google.com de
+    verdade, o endereço na barra continua sendo o do GitHub Pages o tempo
+    todo. Isso evita completamente a interceptação de app que causava o
+    problema, porque essa interceptação só age em cima de navegação de
+    topo, não em cima de sub-recursos carregados dentro de uma página.
 
-    A solução: em vez de mandar as pessoas direto pra uma URL script.google.com
-    (que o Gmail reconhece e mexe), o e-mail agora leva pra ESTA página, num
-    domínio comum (github.io) que o Gmail não tem motivo nenhum pra reescrever.
-    Esta página, assim que carrega, redireciona (via JavaScript, no próprio
-    navegador da pessoa) pro Apps Script de verdade — sem passar pela
-    complicação de conta que causava o problema.
+    Isso só funciona porque o Apps Script (ponte_visualizacao_apps_script.gs)
+    já está configurado com .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
+    — ou seja, ele já permite ser incorporado em iframe de qualquer origem.
 
     MANUTENÇÃO: se um dia o Apps Script for republicado com uma URL nova
     (nova implantação), atualize só a constante DESTINO_PAINEL abaixo — não
@@ -33,19 +38,29 @@
     -->
 
     <style>
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
             background-color: #f4f7f6;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        #tela_carregando {
+            position: fixed;
+            inset: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            color: #333;
             text-align: center;
             padding: 20px;
-            box-sizing: border-box;
+            background-color: #f4f7f6;
+            transition: opacity 0.25s ease;
+        }
+        #tela_carregando.escondida {
+            opacity: 0;
+            pointer-events: none;
         }
         .spinner {
             width: 42px;
@@ -59,26 +74,35 @@
         @keyframes girar {
             to { transform: rotate(360deg); }
         }
-        h1 {
+        #tela_carregando h1 {
             font-size: 18px;
             color: #1e7b34;
-            margin: 0 0 8px 0;
+            margin-bottom: 8px;
         }
-        p {
+        #tela_carregando p {
             font-size: 14px;
             color: #64748b;
-            margin: 0;
         }
-        a {
+        #tela_carregando a {
             color: #1e7b34;
             font-weight: 700;
+        }
+        #frame_painel {
+            display: block;
+            width: 100%;
+            height: 100%;
+            border: none;
         }
     </style>
 </head>
 <body>
-    <div class="spinner" aria-hidden="true"></div>
-    <h1>Abrindo o Painel do Refeitório...</h1>
-    <p>Se não abrir automaticamente em alguns segundos, <a id="link-manual" href="#">clique aqui</a>.</p>
+    <div id="tela_carregando">
+        <div class="spinner" aria-hidden="true"></div>
+        <h1>Abrindo o Painel do Refeitório...</h1>
+        <p>Se não carregar em alguns segundos, <a id="link-manual" href="#" target="_blank" rel="noopener">clique aqui para abrir numa aba nova</a>.</p>
+    </div>
+
+    <iframe id="frame_painel" title="Painel do Refeitório" style="display:none;"></iframe>
 
     <script>
         // AULA TDS: atualize esta URL sempre que o Apps Script for
@@ -87,15 +111,34 @@
         var DESTINO_PAINEL = "https://script.google.com/macros/s/AKfycbwyEaJx35VuwBB37vFdPSEJvDaiTu1EJKloLmaXL799zE5AGYZAyrceVXNIYZnpeFC5dg/exec";
 
         // Encaminha qualquer parâmetro que a página tenha recebido (ex: ?senha=...,
-        // caso alguém tenha favoritado um link já com a senha) para o destino final.
+        // caso alguém tenha favoritado um link já com a senha) para o painel.
         var destinoFinal = DESTINO_PAINEL + window.location.search;
 
-        document.getElementById('link-manual').href = destinoFinal;
+        var telaCarregando = document.getElementById('tela_carregando');
+        var frame = document.getElementById('frame_painel');
+        var linkManual = document.getElementById('link-manual');
 
-        // .replace() no lugar de mudar window.location.href diretamente: não
-        // deixa esta página de redirecionamento no histórico do navegador,
-        // então o botão "voltar" da pessoa não fica preso aqui depois.
-        window.location.replace(destinoFinal);
+        linkManual.href = destinoFinal;
+
+        frame.addEventListener('load', function () {
+            telaCarregando.classList.add('escondida');
+            frame.style.display = 'block';
+        });
+
+        // Só define o "src" (disparando o carregamento) depois dos listeners
+        // já estarem prontos, pra não perder o evento de "load" em conexões
+        // muito rápidas.
+        frame.src = destinoFinal;
+
+        // AULA TDS: proteção — se o iframe nunca disparar "load" por algum
+        // motivo (ex: bloqueio de rede específico), depois de 12s mostra o
+        // link manual em destaque, em vez de deixar a pessoa olhando pro
+        // spinner pra sempre sem nenhuma alternativa.
+        setTimeout(function () {
+            if (!telaCarregando.classList.contains('escondida')) {
+                document.querySelector('#tela_carregando h1').textContent = 'Está demorando mais que o esperado...';
+            }
+        }, 12000);
     </script>
 </body>
 </html>
