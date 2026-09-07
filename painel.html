@@ -6,6 +6,18 @@
     <title>Painel do Refeitório - IFPE Barreiros</title>
 
     <!--
+    AULA TDS: NOVO — dica de PRECONNECT (e dns-prefetch como reforço pra
+    navegadores mais antigos, que não suportam preconnect) pro domínio do
+    Apps Script. Sem isso, o navegador só começa a resolver o DNS e abrir
+    a conexão TCP/TLS pro script.google.com quando o JavaScript roda e
+    define o "src" do iframe — com essa dica, essa conexão pode começar
+    EM PARALELO, bem antes do JavaScript executar. Ganho típico de
+    100-500ms (dependendo da rede), só de eliminar essa espera sequencial.
+    -->
+    <link rel="preconnect" href="https://script.google.com" crossorigin>
+    <link rel="dns-prefetch" href="https://script.google.com">
+
+    <!--
     AULA TDS: CORRIGIDO — versão anterior desta página fazia um
     REDIRECIONAMENTO de topo (window.location.replace) pro Apps Script.
     Isso resolvia o problema do Gmail reescrevendo o link na hora de
@@ -102,7 +114,39 @@
         <p>Se não carregar em alguns segundos, <a id="link-manual" href="#" target="_blank" rel="noopener">clique aqui para abrir numa aba nova</a>.</p>
     </div>
 
-    <iframe id="frame_painel" title="Painel do Refeitório" style="display:none;"></iframe>
+    <!--
+    AULA TDS: NOVO — esta função precisa existir ANTES do iframe abaixo,
+    numa ordem estrita: como o iframe agora começa a carregar direto do
+    HTML (ver "src" no elemento abaixo, colocado assim de propósito pra
+    ganhar velocidade), ele PODE disparar o evento "load" muito rápido —
+    inclusive antes do script principal, lá embaixo no fim da página, ter
+    sido processado. Se a função só existisse lá embaixo, o onload do
+    iframe tentaria chamar algo que ainda não existe, e o spinner ficaria
+    preso na tela pra sempre, mesmo com o painel já carregado por trás.
+    Colocando a função aqui, ela já existe no momento exato em que o
+    iframe é criado — sem nenhuma janela de tempo onde isso poderia falhar.
+    -->
+    <script>
+        function aoCarregarPainel() {
+            document.getElementById('tela_carregando').classList.add('escondida');
+            document.getElementById('frame_painel').style.display = 'block';
+        }
+    </script>
+
+    <!--
+    AULA TDS: NOVO — o "src" agora vai DIRETO no HTML do iframe (endereço
+    padrão, sem parâmetros), em vez de só ser definido depois via
+    JavaScript. Isso deixa o navegador começar a carregar o painel
+    ENQUANTO ainda está processando o resto da página — antes até do
+    script principal (lá embaixo) executar. O script principal só troca
+    esse endereço se a página tiver recebido algum parâmetro (ex: alguém
+    acessando um link salvo antigo com "?senha=..."), um caso raro onde
+    essa vantagem de velocidade se perde, mas o funcionamento continua
+    correto.
+    -->
+    <iframe id="frame_painel" title="Painel do Refeitório" style="display:none;"
+            src="https://script.google.com/macros/s/AKfycbwyEaJx35VuwBB37vFdPSEJvDaiTu1EJKloLmaXL799zE5AGYZAyrceVXNIYZnpeFC5dg/exec"
+            onload="aoCarregarPainel()"></iframe>
 
     <script>
         // AULA TDS: atualize esta URL sempre que o Apps Script for
@@ -110,25 +154,29 @@
         // "/a/dominio/" no meio (ver aviso completo em automacao_relatorio.py).
         var DESTINO_PAINEL = "https://script.google.com/macros/s/AKfycbwyEaJx35VuwBB37vFdPSEJvDaiTu1EJKloLmaXL799zE5AGYZAyrceVXNIYZnpeFC5dg/exec";
 
-        // Encaminha qualquer parâmetro que a página tenha recebido (ex: ?senha=...,
-        // caso alguém tenha favoritado um link já com a senha) para o painel.
-        var destinoFinal = DESTINO_PAINEL + window.location.search;
-
         var telaCarregando = document.getElementById('tela_carregando');
         var frame = document.getElementById('frame_painel');
         var linkManual = document.getElementById('link-manual');
 
+        // AULA TDS: CORRIGIDO — o iframe já vem com o "src" padrão direto
+        // no HTML (ver acima), começando a carregar assim que a página é
+        // processada, sem esperar este script rodar. O listener de "load"
+        // também já foi movido pro atributo onload do próprio iframe (ver
+        // aoCarregarPainel, definido ANTES do iframe), pra garantir que
+        // ele já existe antes de qualquer chance do carregamento terminar.
+        //
+        // Este trecho só precisa TROCAR o "src" no caso raro de a página
+        // ter recebido algum parâmetro (ex: ?senha=... de um link salvo
+        // antigo) — sem isso, o link manual e o painel embutido ficariam
+        // sem esse parâmetro. Quando troca, o navegador reinicia o
+        // carregamento do zero com o endereço novo (perde a vantagem de
+        // velocidade nesse caso específico, mas continua funcionando).
+        var destinoFinal = DESTINO_PAINEL + window.location.search;
         linkManual.href = destinoFinal;
 
-        frame.addEventListener('load', function () {
-            telaCarregando.classList.add('escondida');
-            frame.style.display = 'block';
-        });
-
-        // Só define o "src" (disparando o carregamento) depois dos listeners
-        // já estarem prontos, pra não perder o evento de "load" em conexões
-        // muito rápidas.
-        frame.src = destinoFinal;
+        if (window.location.search) {
+            frame.src = destinoFinal;
+        }
 
         // AULA TDS: proteção — se o iframe nunca disparar "load" por algum
         // motivo (ex: bloqueio de rede específico), depois de 12s mostra o
