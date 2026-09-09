@@ -656,29 +656,39 @@
         }
 
         function baixarQRCode() {
-            let tempCanvas = gerarCanvasQRCode();
+            // AULA TDS: CORRIGIDO — faltava o mesmo try/catch que já existe
+            // em baixarQRCodePDF() logo abaixo. Sem isso, uma falha rara
+            // (ex: toDataURL() falhando por algum motivo específico do
+            // navegador) quebrava com um erro cru, visível só no console —
+            // o aluno só via nada acontecer, sem nenhuma mensagem clara.
+            try {
+                let tempCanvas = gerarCanvasQRCode();
 
-            if (!tempCanvas) {
-                alert("Erro: O QR Code ainda não foi gerado.");
-                return;
+                if (!tempCanvas) {
+                    alert("Erro: O QR Code ainda não foi gerado.");
+                    return;
+                }
+
+                let link = document.createElement("a");
+                // AULA TDS: CORRIGIDO — trocado de JPEG (compressão COM perda) para PNG
+                // (SEM perda). QR Code é feito de blocos pretos/brancos com bordas bem
+                // nítidas — a compressão do JPEG (mesmo em qualidade máxima) pode borrar
+                // levemente essas bordas, o que vai contra o objetivo de deixar o QR
+                // fácil/rápido de ler pelo leitor. PNG preserva os pixels exatamente
+                // como estão, sem nenhum tipo de perda.
+                link.href = tempCanvas.toDataURL("image/png");
+
+                // Sanitiza a matrícula para evitar caracteres inválidos no nome do arquivo
+                let matriculaSegura = matriculaAtual.replace(/[^a-zA-Z0-9]/g, "_");
+                link.download = "QRCode_Refeitorio_" + matriculaSegura + ".png";
+
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } catch (erro) {
+                console.error(erro);
+                alert("Ops! Não foi possível baixar o QR Code.\n\nDetalhe: " + erro.message);
             }
-
-            let link = document.createElement("a");
-            // AULA TDS: CORRIGIDO — trocado de JPEG (compressão COM perda) para PNG
-            // (SEM perda). QR Code é feito de blocos pretos/brancos com bordas bem
-            // nítidas — a compressão do JPEG (mesmo em qualidade máxima) pode borrar
-            // levemente essas bordas, o que vai contra o objetivo de deixar o QR
-            // fácil/rápido de ler pelo leitor. PNG preserva os pixels exatamente
-            // como estão, sem nenhum tipo de perda.
-            link.href = tempCanvas.toDataURL("image/png");
-
-            // Sanitiza a matrícula para evitar caracteres inválidos no nome do arquivo
-            let matriculaSegura = matriculaAtual.replace(/[^a-zA-Z0-9]/g, "_");
-            link.download = "QRCode_Refeitorio_" + matriculaSegura + ".png";
-
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
         }
 
         // AULA TDS: monta um PDF de página inteira (A4) com o QR Code centralizado,
